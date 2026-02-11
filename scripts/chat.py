@@ -1,6 +1,7 @@
 # scripts/chat.py
 from src.config import load_config
 from src.rag_pipeline import LocalRAG
+from src.run_logger import finish_run, start_run
 
 
 def main():
@@ -16,11 +17,33 @@ def main():
     print("Type a question. Ctrl+C to exit.\n")
 
     while True:
-        q = input("> ").strip()
+        q = input("Human > ").strip()
         if not q:
             continue
 
-        out = rag.query(q)
+        run = start_run(question=q, cfg=cfg)
+        try:
+            out = rag.query(q)
+            finish_run(
+                run=run,
+                answer=out.get("answer", ""),
+                sources=out.get("sources", []),
+                timings=out.get("timings_ms", {}),
+                context_used=out.get("context_used", ""),
+                retrieval=out.get("retrieval", {}),
+            )
+        except Exception as exc:
+            finish_run(
+                run=run,
+                answer="",
+                sources=[],
+                timings={},
+                error=str(exc),
+                context_used="",
+                retrieval={},
+            )
+            raise
+
         print("\n" + out["answer"] + "\n")
 
         if out.get("sources"):

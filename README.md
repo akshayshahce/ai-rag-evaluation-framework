@@ -1,8 +1,21 @@
 # ai-rag-evaluation-framework
 
-A production-oriented framework for building Retrieval-Augmented Generation (RAG) pipelines with switchable providers (local or hosted). The project focuses on clean configuration, reproducibility, and real-world architecture patterns for context-grounded LLM applications.
+A simple, production-style **local-first RAG** project:
+- Ingest PDFs/text from `data/`
+- Chunk + embed them
+- Store vectors in **ChromaDB**
+- Retrieve relevant context for each question
+- Generate an answer using **Ollama (local)** or **OpenAI (hosted)** — controlled by `.env`
 
 ---
+
+## What this repo does
+
+When you ask a question, the system:
+1. **Searches your documents** to find the most relevant text chunks.
+2. **Injects those chunks** into the prompt as context.
+3. **Asks the LLM** to answer using ONLY that context.
+4. Returns the answer + **sources** (file + page) so responses are explainable.
 
 ## What This Repo Covers
 
@@ -173,9 +186,56 @@ src/
 
 scripts/
  ├── chat.py
+ ├── dashboard.py
 
  data/
+ runs/
 ```
+
+## Dashboard
+
+Run the local dashboard:
+
+```bash
+streamlit run scripts/dashboard.py
+```
+
+The dashboard includes:
+
+1. Home / Overview: totals, avg latency, avg answer length, config snapshot, mode (local-only vs OpenAI enabled)
+2. Runs Table: search/filter over `runs/*.jsonl`, with provider/date/source/keyword filters
+3. Run Detail: full retrieval + generation debug view per run
+4. Documents / Index: data files, Chroma stats, rebuild and clear actions
+5. Evaluation: optional visualization when eval results are present
+
+
+## Run Logging
+
+Every question asked in `python -m scripts.chat` is logged to append-only JSONL files:
+
+- directory: `runs/`
+- file pattern: `runs/YYYY-MM-DD.jsonl`
+- one JSON object per run (with `run_id`)
+
+## Data Format (JSONL Run Schema)
+
+Each run record includes:
+
+- `run_id`
+- `timestamp_start`, `timestamp_end`
+- `provider`, `model`
+- `provider_details` (for ollama: `base_url` + model; for openai: model only)
+- `question`, `answer`
+- `top_k`, `chunk_size`, `chunk_overlap`, `max_context_chars`
+- `data_dir`, `chroma_persist_dir`, `chroma_collection`
+- `num_sources`, `sources` (`file`, `page`, `score`, `text`)
+- `context_used` (actual context string sent to the model)
+- `retrieval` (`top_k`, `similarity_metric` when available)
+- `timings_ms` (`index_build_ms`, `retrieval_ms`, `generation_ms`, `total_ms`)
+- `error` (nullable)
+- `app_version` (git commit hash if available)
+
+Secrets are not logged. `OPENAI_API_KEY` is never written to run logs.
 
 ---
 

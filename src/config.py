@@ -12,6 +12,8 @@ class AppConfig(BaseModel):
     embed_provider: str | None = None  # None = derive from llm_provider
 
     openai_api_key: str | None = None
+    openai_model: str = "gpt-4o-mini"
+    openai_embed_model: str = "text-embedding-3-small"
 
     ollama_base_url: str = "http://localhost:11434"
     ollama_model: str = "llama3.1:8b"
@@ -42,6 +44,8 @@ def load_config() -> AppConfig:
         llm_provider=llm_provider,
         embed_provider=embed_provider,
         openai_api_key=os.getenv("OPENAI_API_KEY"),
+        openai_model=os.getenv("OPENAI_MODEL", "gpt-4o-mini"),
+        openai_embed_model=os.getenv("OPENAI_EMBED_MODEL", "text-embedding-3-small"),
         ollama_base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434"),
         ollama_model=os.getenv("OLLAMA_MODEL", "llama3.1:8b"),
         hf_embed_model=os.getenv("HF_EMBED_MODEL", "intfloat/e5-small-v2"),
