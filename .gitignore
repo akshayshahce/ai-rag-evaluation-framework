@@ -1,0 +1,54 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+
+# Virtual env
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Environment secrets
+.env
+
+# Chroma DB storage
+chroma_db/
+
+# Data / local documents (optional)
+data/*
+!data/.gitkeep
+
+# Model caches
+.cache/
+.huggingface/
+.hf_cache/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+
+# Test artifacts
+.pytest_cache/
+coverage.xml
+htmlcov/
+
+# Mac temp
+*.swp
+*.swo

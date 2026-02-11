@@ -1,0 +1,19 @@
+python-dotenv
+pydantic
+
+chromadb
+
+llama-index>=0.10
+llama-index-vector-stores-chroma
+llama-index-llms-ollama
+llama-index-embeddings-huggingface
+
+# OpenAI only when LLM_PROVIDER=openai
+openai
+llama-index-llms-openai
+llama-index-embeddings-openai
+
+# HF embedding runtime
+sentence-transformers
+transformers
+huggingface-hub
